@@ -2,7 +2,7 @@
 
 ## A- Exécution
 
-Compilez et lancez le programme.
+:heavy_check_mark: Compilez et lancez le programme.
 
 :heavy_check_mark: Allez dans le fichier `tower_sim.cpp` et recherchez la fonction responsable de gérer les inputs du programme.
 Sur quelle touche faut-il appuyer pour ajouter un avion ?

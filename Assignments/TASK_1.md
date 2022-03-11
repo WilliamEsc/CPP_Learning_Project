@@ -21,6 +21,20 @@ Vous avez 2 choix possibles :
 
 Réfléchissez aux pour et contre de chacune de ces options.
 
+`AircraftManager`
+Pour:
+    Single-Responsability
+    plus maintenable
+Contre:
+
+
+rôle
+    Pour:
+
+    Contre:
+        moins maintenable
+        Single-Responsability
+
 Pour le restant de l'exercice, vous partirez sur le premier choix.
 
 ### B - Déterminer le propriétaire de chaque avion
@@ -30,8 +44,13 @@ Il serait donc bon de savoir qui est censé détruire les avions du programme, a
 
 Répondez aux questions suivantes :
 1. Qui est responsable de détruire les avions du programme ? (si vous ne trouvez pas, faites/continuez la question 4 dans TASK_0)
+
 2. Quelles autres structures contiennent une référence sur un avion au moment où il doit être détruit ?
+displayable dans display_queue
+
 3. Comment fait-on pour supprimer la référence sur un avion qui va être détruit dans ces structures ?
+on parcours avec les itérateurs pour supprimer l'avion, dans le destructeur de la classe.
+
 4. Pourquoi n'est-il pas très judicieux d'essayer d'appliquer la même chose pour votre `AircraftManager` ?
 
 Pour simplifier le problème, vous allez déplacer l'ownership des avions dans la classe `AircraftManager`.
