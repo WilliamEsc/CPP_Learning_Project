@@ -3,6 +3,7 @@
 #include "GL/opengl_interface.hpp"
 #include "aircraft.hpp"
 #include "aircraftManager.hpp"
+#include "aircraftFactory.hpp"
 #include "airport.hpp"
 #include "config.hpp"
 #include "img/image.hpp"
@@ -53,9 +54,9 @@ void TowerSimulation::display_help() const
     std::cout << "This is an airport tower simulator" << std::endl
               << "the following keysstrokes have meaning:" << std::endl;
 
-    for (const auto& ks_pair : GL::keystrokes)
+    for (const auto& [key, value] : GL::keystrokes)
     {
-        std::cout << ks_pair.first << ' ';
+        std::cout << key << ' ';
     }
 
     std::cout << std::endl;
@@ -78,7 +79,6 @@ void TowerSimulation::launch()
     }
 
     init_airport();
-    init_aircraft_types();
-
+    aircraft_factory.init_aircraft_types();
     GL::loop();
 }
