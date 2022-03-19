@@ -94,7 +94,6 @@ void Aircraft::move()
     {
         waypoints = control.get_instructions(*this);
     }
-
     if (!is_at_terminal)
     {
         turn_to_waypoint();
@@ -136,6 +135,11 @@ void Aircraft::move()
         // update the z-value of the displayable structure
         GL::Displayable::z = pos.x() + pos.y();
     }
+}
+
+bool Aircraft::toDelete() const
+{
+    return waypoints.empty() && is_served;
 }
 
 void Aircraft::display() const
