@@ -21,6 +21,7 @@ private:
     bool landing_gear_deployed = false; // is the landing gear deployed?
     bool is_at_terminal        = false;
     bool is_served             = false;
+    int fuel;
     // turn the aircraft to arrive at the next waypoint
     // try to facilitate reaching the waypoint after the next by facing the
     // right way to this end, we try to face the point Z on the line spanned by
@@ -52,7 +53,8 @@ public:
         flight_number { flight_number_ },
         pos { pos_ },
         speed { speed_ },
-        control { control_ }
+        control { control_ },
+        fuel { (rand() % 2850) + 150 }
     {
         speed.cap_length(max_speed());
     }
@@ -64,6 +66,13 @@ public:
     void move() override;
     bool toDelete() const;
     void finishService();
+    const std::string flightNumber() const;
+    bool has_terminal() const;
+    bool is_circling() const;
+    int getFuel() const;
+    bool is_low_on_fuel() const;
+    bool at_terminal() const;
+    int refill(int& fuel_stock);
 
     friend class Tower;
 };

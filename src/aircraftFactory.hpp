@@ -18,4 +18,5 @@ public:
     void init_aircraft_types();
     std::unique_ptr<Aircraft> create_aircraft(const AircraftType& type, Tower& tower);
     std::unique_ptr<Aircraft> create_random_aircraft(Tower& tower);
+    const std::string airline(const int index) const;
 };

@@ -2,6 +2,7 @@
 
 #include "GL/opengl_interface.hpp"
 
+#include <algorithm>
 #include <cmath>
 
 void Aircraft::turn_to_waypoint()
@@ -130,8 +131,18 @@ void Aircraft::move()
             {
                 pos.z() -= SINK_FACTOR * (SPEED_THRESHOLD - speed_len);
             }
+            fuel--;
+            if (fuel == 0)
+                std::cout << "crash" << std::endl;
+            if (!has_terminal())
+            {
+                WaypointQueue terminalWaypoint = control.reserve_terminal(*this);
+                if (!terminalWaypoint.empty())
+                {
+                    waypoints = std::move(terminalWaypoint);
+                }
+            }
         }
-
         // update the z-value of the displayable structure
         GL::Displayable::z = pos.x() + pos.y();
     }
@@ -139,10 +150,54 @@ void Aircraft::move()
 
 bool Aircraft::toDelete() const
 {
-    return waypoints.empty() && is_served;
+    return (waypoints.empty() && is_served) || fuel == 0;
 }
 
 void Aircraft::display() const
 {
     type.texture.draw(project_2D(pos), { PLANE_TEXTURE_DIM, PLANE_TEXTURE_DIM }, get_speed_octant());
+}
+
+const std::string Aircraft::flightNumber() const
+{
+    return flight_number;
+}
+
+bool Aircraft::has_terminal() const
+{
+    return !waypoints.empty() && waypoints.back().type == wp_terminal;
+}
+
+bool Aircraft::is_circling() const
+{
+    return !waypoints.empty() && waypoints.back().type == wp_air;
+}
+
+int Aircraft::getFuel() const
+{
+    return fuel;
+}
+bool Aircraft::is_low_on_fuel() const
+{
+    return fuel < 200;
+}
+
+bool Aircraft::at_terminal() const
+{
+    return is_at_terminal;
+}
+
+int Aircraft::refill(int& fuel_stock)
+{
+    int plein = 0;
+    if (fuel_stock - 3000 + fuel < 0)
+    {
+        plein = fuel_stock;
+    }
+    else
+    {
+        plein = 3000 - fuel;
+    }
+    fuel_stock -= plein;
+    fuel += plein;
 }

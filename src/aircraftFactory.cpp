@@ -28,3 +28,7 @@ std::unique_ptr<Aircraft> AircraftFactory::create_random_aircraft(Tower& tower)
 {
     return create_aircraft(*(aircraft_types[rand() % 3]), tower);
 }
+
+const std::string AircraftFactory::airline(const int index) const{
+    return airlines[index];
+}
