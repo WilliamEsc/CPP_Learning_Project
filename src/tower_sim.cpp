@@ -2,8 +2,8 @@
 
 #include "GL/opengl_interface.hpp"
 #include "aircraft.hpp"
-#include "aircraftManager.hpp"
 #include "aircraftFactory.hpp"
+#include "aircraftManager.hpp"
 #include "airport.hpp"
 #include "config.hpp"
 #include "img/image.hpp"
@@ -47,6 +47,30 @@ void TowerSimulation::create_keystrokes()
     GL::keystrokes.emplace('o', []() { GL::up_framerate(); });
     GL::keystrokes.emplace('l', []() { GL::down_framerate(); });
     GL::keystrokes.emplace('p', []() { GL::pause(); });
+    GL::keystrokes.emplace(
+        '0',
+        [this]() { std::cout << aircraft_manager.count_airlines(aircraft_factory.airline(0)) << std::endl; });
+    GL::keystrokes.emplace(
+        '1',
+        [this]() { std::cout << aircraft_manager.count_airlines(aircraft_factory.airline(1)) << std::endl; });
+    GL::keystrokes.emplace(
+        '2',
+        [this]() { std::cout << aircraft_manager.count_airlines(aircraft_factory.airline(2)) << std::endl; });
+    GL::keystrokes.emplace(
+        '3',
+        [this]() { std::cout << aircraft_manager.count_airlines(aircraft_factory.airline(3)) << std::endl; });
+    GL::keystrokes.emplace(
+        '4',
+        [this]() { std::cout << aircraft_manager.count_airlines(aircraft_factory.airline(4)) << std::endl; });
+    GL::keystrokes.emplace(
+        '5',
+        [this]() { std::cout << aircraft_manager.count_airlines(aircraft_factory.airline(5)) << std::endl; });
+    GL::keystrokes.emplace(
+        '6',
+        [this]() { std::cout << aircraft_manager.count_airlines(aircraft_factory.airline(6)) << std::endl; });
+    GL::keystrokes.emplace(
+        '7',
+        [this]() { std::cout << aircraft_manager.count_airlines(aircraft_factory.airline(7)) << std::endl; });
 }
 
 void TowerSimulation::display_help() const
@@ -64,8 +88,9 @@ void TowerSimulation::display_help() const
 
 void TowerSimulation::init_airport()
 {
-    airport = new Airport { one_lane_airport, Point3D { 0, 0, 0 },
-                            new img::Image { one_lane_airport_sprite_path.get_full_path() } };
+    airport =
+        new Airport { one_lane_airport, Point3D { 0, 0, 0 },
+                      new img::Image { one_lane_airport_sprite_path.get_full_path() }, aircraft_manager };
 
     GL::move_queue.emplace(airport);
 }
