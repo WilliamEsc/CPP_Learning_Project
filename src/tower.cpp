@@ -79,3 +79,13 @@ WaypointQueue Tower::reserve_terminal(Aircraft& aircraft)
         return {};
     }
 }
+
+void Tower::crash_Aircraft(Aircraft& aircraft)
+{
+    const auto it = reserved_terminals.find(&aircraft);
+    if (it != reserved_terminals.end())
+    {
+        airport.get_terminal(it->second).clear_terminal();
+        reserved_terminals.erase(it);
+    }
+}

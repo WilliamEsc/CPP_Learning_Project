@@ -22,9 +22,17 @@ void AircraftManager::move()
                   return ar1->getFuel() < ar2->getFuel();
               });
     aircrafts.erase(std::remove_if(aircrafts.begin(), aircrafts.end(),
-                                   [](std::unique_ptr<Aircraft>& aircraft)
+                                   [this](std::unique_ptr<Aircraft>& aircraft)
                                    {
-                                       aircraft->move();
+                                       try
+                                       {
+                                           aircraft->move();
+                                       } catch (AircraftCrash& err)
+                                       {
+                                           nbCrash++;
+                                           std::cerr << " KABOUM " << std::endl;
+                                           return true;
+                                       }
                                        return aircraft->toDelete();
                                    }),
                     aircrafts.end());
@@ -33,10 +41,6 @@ void AircraftManager::move()
 void AircraftManager::add(std::unique_ptr<Aircraft> aircraft)
 {
     aircrafts.emplace_back(std::move(aircraft));
-    for (const auto& e : aircrafts)
-    {
-        std::cout << " reserved : " << e->has_terminal() << " fuel : " << e->getFuel() << std::endl;
-    }
 }
 
 int AircraftManager::count_airlines(const std::string& airline) const
@@ -48,13 +52,18 @@ int AircraftManager::count_airlines(const std::string& airline) const
 
 int AircraftManager::get_required_fuel() const
 {
-    std::reduce(aircrafts.begin(), aircrafts.end(), 0,
-                [](int v1, const std::unique_ptr<Aircraft>& aircraft)
-                {
-                    if (aircraft->is_low_on_fuel() && aircraft->at_terminal())
-                    {
-                        return v1 + 3000 - aircraft->getFuel();
-                    }
-                    return v1;
-                });
+    return std::accumulate(aircrafts.begin(), aircrafts.end(), 0,
+                           [](int v1, const std::unique_ptr<Aircraft>& aircraft)
+                           {
+                               if (aircraft->is_low_on_fuel() && aircraft->has_terminal())
+                               {
+                                   return v1 + 3000 - aircraft->getFuel();
+                               }
+                               return v1;
+                           });
+}
+
+int AircraftManager::get_nbCrash() const
+{
+    return nbCrash;
 }

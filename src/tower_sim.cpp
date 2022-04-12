@@ -47,6 +47,7 @@ void TowerSimulation::create_keystrokes()
     GL::keystrokes.emplace('o', []() { GL::up_framerate(); });
     GL::keystrokes.emplace('l', []() { GL::down_framerate(); });
     GL::keystrokes.emplace('p', []() { GL::pause(); });
+    GL::keystrokes.emplace('m', [this]() { std::cout << aircraft_manager.get_nbCrash() << std::endl; });
     GL::keystrokes.emplace(
         '0',
         [this]() { std::cout << aircraft_manager.count_airlines(aircraft_factory.airline(0)) << std::endl; });
@@ -100,7 +101,6 @@ void TowerSimulation::launch()
     if (help)
     {
         display_help();
-        return;
     }
 
     init_airport();

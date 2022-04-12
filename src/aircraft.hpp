@@ -47,17 +47,19 @@ private:
 
 public:
     Aircraft(const AircraftType& type_, const std::string_view& flight_number_, const Point3D& pos_,
-             const Point3D& speed_, Tower& control_) :
+             const Point3D& speed_, Tower& control_, const int fuel_) :
         GL::Displayable { pos_.x() + pos_.y() },
         type { type_ },
         flight_number { flight_number_ },
         pos { pos_ },
         speed { speed_ },
         control { control_ },
-        fuel { (rand() % 2850) + 150 }
+        fuel { fuel_ }
     {
         speed.cap_length(max_speed());
     }
+
+    ~Aircraft() { control.crash_Aircraft(*this); }
 
     const std::string& get_flight_num() const { return flight_number; }
     float distance_to(const Point3D& p) const { return pos.distance_to(p); }
@@ -72,7 +74,7 @@ public:
     int getFuel() const;
     bool is_low_on_fuel() const;
     bool at_terminal() const;
-    int refill(int& fuel_stock);
+    void refill(int& fuel_stock);
 
     friend class Tower;
 };

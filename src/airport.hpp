@@ -3,6 +3,7 @@
 #include "GL/displayable.hpp"
 #include "GL/dynamic_object.hpp"
 #include "GL/texture.hpp"
+#include "aircraftManager.hpp"
 #include "airport_type.hpp"
 #include "geometry.hpp"
 #include "img/image.hpp"
@@ -92,5 +93,5 @@ public:
         }
     }
 
-    friend class Tower;
+        friend class Tower;
 };

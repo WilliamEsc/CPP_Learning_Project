@@ -133,7 +133,10 @@ void Aircraft::move()
             }
             fuel--;
             if (fuel == 0)
-                std::cout << "crash" << std::endl;
+            {
+                using namespace std::string_literals;
+                throw AircraftCrash { flight_number + " crashed because y'as plus de fuel"s };
+            }
             if (!has_terminal())
             {
                 WaypointQueue terminalWaypoint = control.reserve_terminal(*this);
@@ -165,12 +168,12 @@ const std::string Aircraft::flightNumber() const
 
 bool Aircraft::has_terminal() const
 {
-    return !waypoints.empty() && waypoints.back().type == wp_terminal;
+    return !waypoints.empty() && waypoints.back().is_at_terminal();
 }
 
 bool Aircraft::is_circling() const
 {
-    return !waypoints.empty() && waypoints.back().type == wp_air;
+    return !waypoints.empty() && !waypoints.back().is_on_ground();
 }
 
 int Aircraft::getFuel() const
@@ -187,16 +190,12 @@ bool Aircraft::at_terminal() const
     return is_at_terminal;
 }
 
-int Aircraft::refill(int& fuel_stock)
+void Aircraft::refill(int& fuel_stock)
 {
-    int plein = 0;
-    if (fuel_stock - 3000 + fuel < 0)
+    int plein = 3000 - fuel;
+    if (plein > fuel_stock)
     {
         plein = fuel_stock;
-    }
-    else
-    {
-        plein = 3000 - fuel;
     }
     fuel_stock -= plein;
     fuel += plein;
