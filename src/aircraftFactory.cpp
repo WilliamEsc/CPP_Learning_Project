@@ -1,12 +1,5 @@
 #include "aircraftFactory.hpp"
 
-void AircraftFactory::init_aircraft_types()
-{
-    aircraft_types[0] = new AircraftType { .02f, .05f, .02f, MediaPath { "l1011_48px.png" } };
-    aircraft_types[1] = new AircraftType { .02f, .05f, .02f, MediaPath { "b707_jat.png" } };
-    aircraft_types[2] = new AircraftType { .02f, .08f, .03f, MediaPath { "concorde_af.png" } };
-}
-
 std::unique_ptr<Aircraft> AircraftFactory::create_aircraft(const AircraftType& type, Tower& tower)
 {
     std::string number = airlines[std::rand() % 8] + std::to_string(1000 + (rand() % 9000));
@@ -15,6 +8,8 @@ std::unique_ptr<Aircraft> AircraftFactory::create_aircraft(const AircraftType& t
         number = airlines[std::rand() % 8] + std::to_string(1000 + (rand() % 9000));
     }
     const std::string flight_number = number;
+    assert(
+        !(airflight_number_set.find(flight_number) != airflight_number_set.end())); // très con comme assert
     airflight_number_set.emplace(flight_number);
     const float angle       = (rand() % 1000) * 2 * 3.141592f / 1000.f; // random angle between 0 and 2pi
     const Point3D start     = Point3D { std::sin(angle), std::cos(angle), 0 } * 3 + Point3D { 0, 0, 2 };
@@ -25,10 +20,11 @@ std::unique_ptr<Aircraft> AircraftFactory::create_aircraft(const AircraftType& t
 
 std::unique_ptr<Aircraft> AircraftFactory::create_random_aircraft(Tower& tower)
 {
-    return create_aircraft(*(aircraft_types[rand() % 3]), tower);
+    return create_aircraft(aircraft_types[rand() % 3], tower);
 }
 
 const std::string AircraftFactory::airline(const int index) const
 {
+    assert((index >= 0 && index < 8));
     return airlines[index];
 }

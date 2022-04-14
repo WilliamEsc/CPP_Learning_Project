@@ -73,6 +73,7 @@ public:
 
     void move() override
     {
+        assert(next_refill_time >= 0);
         if (next_refill_time == 0)
         {
             int recue = ordered_fuel;
@@ -93,5 +94,5 @@ public:
         }
     }
 
-        friend class Tower;
+    friend class Tower;
 };

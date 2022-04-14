@@ -173,7 +173,7 @@ bool Aircraft::has_terminal() const
 
 bool Aircraft::is_circling() const
 {
-    return !waypoints.empty() && !waypoints.back().is_on_ground();
+    return !waypoints.empty() && !waypoints.back().is_on_ground() && !is_served;
 }
 
 int Aircraft::getFuel() const
@@ -192,6 +192,7 @@ bool Aircraft::at_terminal() const
 
 void Aircraft::refill(int& fuel_stock)
 {
+    assert(fuel_stock >= 0);
     int plein = 3000 - fuel;
     if (plein > fuel_stock)
     {
