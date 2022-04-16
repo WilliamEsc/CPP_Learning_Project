@@ -6,15 +6,25 @@
 
 :heavy_check_mark: Allez dans le fichier `tower_sim.cpp` et recherchez la fonction responsable de gérer les inputs du programme.
 Sur quelle touche faut-il appuyer pour ajouter un avion ?
+la touche C
 Comment faire pour quitter le programme ?
+les touches Q ou X
 A quoi sert la touche 'F' ?
+pour le fullscreen
 
 Ajoutez un avion à la simulation et attendez.
 Que est le comportement de l'avion ?
+L'avion arrive, il se pose, il va vers un terminal, il redécolle après un certain temps, il fait un tour et recommence.
 Quelles informations s'affichent dans la console ?
+L'avion atterit
+L'avion se fait servir
+l'avion as été servit
+L'avion décolle
+
 
 Ajoutez maintenant quatre avions d'un coup dans la simulation.
 Que fait chacun des avions ?
+3avions atterissent le dernier tourne autour de l'aeroport
 
 ## B- Analyse du code
 
@@ -37,6 +47,8 @@ Modifiez le programme pour tenir compte de cela.
 2) Identifiez quelle variable contrôle le framerate de la simulation.
 Ajoutez deux nouveaux inputs au programme permettant d'augmenter ou de diminuer cette valeur.
 Essayez maintenant de mettre en pause le programme en manipulant ce framerate. Que se passe-t-il ?\
+le programme crash (division par 0)
+
 Ajoutez une nouvelle fonctionnalité au programme pour mettre le programme en pause, et qui ne passe pas par le framerate.
 
 3) Identifiez quelle variable contrôle le temps de débarquement des avions et doublez-le.
@@ -45,14 +57,22 @@ Ajoutez une nouvelle fonctionnalité au programme pour mettre le programme en pa
 Faites en sorte qu'à la place, il soit retiré du programme.\
 Indices :\
 A quel endroit pouvez-vous savoir que l'avion doit être supprimé ?\
+Dans la fonction move de l'avion
+
 Pourquoi n'est-il pas sûr de procéder au retrait de l'avion dans cette fonction ?
+Il peut avoir un pointer dessus ailleurs dans le code
+
 A quel endroit de la callstack pourriez-vous le faire à la place ?\
+dans la fonction move de opengl_interface
+
 Que devez-vous modifier pour transmettre l'information de la première à la seconde fonction ?
+créer un fonction pour savoir si on doit supprimer l'avion
 
 5) Lorsqu'un objet de type `Displayable` est créé, il faut ajouter celui-ci manuellement dans la liste des objets à afficher.
 Il faut également penser à le supprimer de cette liste avant de le détruire.
 Faites en sorte que l'ajout et la suppression de `display_queue` soit "automatiquement gérée" lorsqu'un `Displayable` est créé ou détruit.
 Pourquoi n'est-il pas spécialement pertinent d'en faire de même pour `DynamicObject` ?
+//y'as plus la question dans les modifs.
 
 6) La tour de contrôle a besoin de stocker pour tout `Aircraft` le `Terminal` qui lui est actuellement attribué, afin de pouvoir le libérer une fois que l'avion décolle.
 Cette information est actuellement enregistrée dans un `std::vector<std::pair<const Aircraft*, size_t>>` (size_t représentant l'indice du terminal).

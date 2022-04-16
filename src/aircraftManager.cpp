@@ -56,7 +56,7 @@ int AircraftManager::get_required_fuel() const
     return std::accumulate(aircrafts.begin(), aircrafts.end(), 0,
                            [](int v1, const std::unique_ptr<Aircraft>& aircraft)
                            {
-                               if (aircraft->is_low_on_fuel() && aircraft->has_terminal())
+                               if (aircraft->is_low_on_fuel() && !aircraft->already_leave())
                                {
                                    return v1 + 3000 - aircraft->getFuel();
                                }
