@@ -2,9 +2,9 @@
 
 ## A- Exécution
 
-:heavy_check_mark: Compilez et lancez le programme.
+Compilez et lancez le programme.
 
-:heavy_check_mark: Allez dans le fichier `tower_sim.cpp` et recherchez la fonction responsable de gérer les inputs du programme.
+Allez dans le fichier `tower_sim.cpp` et recherchez la fonction responsable de gérer les inputs du programme.
 Sur quelle touche faut-il appuyer pour ajouter un avion ?
 la touche C
 Comment faire pour quitter le programme ?
@@ -24,19 +24,74 @@ L'avion décolle
 
 Ajoutez maintenant quatre avions d'un coup dans la simulation.
 Que fait chacun des avions ?
-3avions atterissent le dernier tourne autour de l'aeroport
+3avions atterissent le dernier tourne autour de l'aeroport en attendant son tour
 
 ## B- Analyse du code
 
 Listez les classes du programme à la racine du dossier src/.
 Pour chacune d'entre elle, expliquez ce qu'elle représente et son rôle dans le programme.
 
+    Aircraft, un avion avec sa position, sa vitesse
+    AircraftType, différents type d'avion
+    Airport, l'aeroport
+    AirportType, type d'aeroport
+    Terminal, terminal
+    Tower, donne les ordres aux avions
+    TowerSimulation, l'application
+    Point2D, un point 2d
+    Point3D, un point 3d
+    Runway, la piste d'atterissage
+    Waypoint, position dans l'application
+
+
 Pour les classes `Tower`, `Aircaft`, `Airport` et `Terminal`, listez leurs fonctions-membre publiques et expliquez précisément à quoi elles servent.
 Réalisez ensuite un schéma présentant comment ces différentes classes intéragissent ensemble.
 
+Tower :
+    Tower(Airport& airport_) //constructeur
+    get_instructions(Aircraft& aircraft) //donne des instructions à l'avion
+    arrived_at_terminal(const Aircraft& aircraft) // indique si l'avion est arrivé au terminal
+
+Aircraft
+    Aircraft(const AircraftType& type_, const std::string_view& flight_number_, const Point3D& pos_,
+             const Point3D& speed_, Tower& control_) //constructeur
+    get_flight_num() // recupere le numero de vol
+    distance_to(const Point3D& p) // distance avec le point
+
+    display() // affichage
+    move() // bouge
+
+Airport
+    Airport(const AirportType& type_, const Point3D& pos_, const img::Image* image, const float z_ = 1.0f) //constructeur
+    get_tower() // récupere la tour
+    display() //affichage
+    move() //bouge
+
+Terminal
+    Terminal(const Point3D& pos_)//constructeur
+    in_use() // si deja en utilisation
+    is_servicing() // si il sert un avion
+    assign_craft(const Aircraft& aircraft) // assigne un avion au terminal
+    start_service(const Aircraft& aircraft) // commence le service de l'avion
+    finish_service() // termine le service
+    move() // avance le service
+
 Quelles classes et fonctions sont impliquées dans la génération du chemin d'un avion ?
+
+Tower::get_instructions
+Tower::get_circle
+Tower::reserve_terminal
+AirportType::air_to_terminal
+Airport::start_path
+AirportType::terminal_to_air
+
 Quel conteneur de la librairie standard a été choisi pour représenter le chemin ?
+
+deque
+
 Expliquez les intérêts de ce choix.
+
+accés et suppression de la tête en o(1)
 
 ## C- Bidouillons !
 
@@ -44,7 +99,8 @@ Expliquez les intérêts de ce choix.
 Le Concorde est censé pouvoir voler plus vite que les autres avions.
 Modifiez le programme pour tenir compte de cela.
 
-2) Identifiez quelle variable contrôle le framerate de la simulation.
+2) Identifiez quelle variable contrôle le framerate de la simulation.\
+Le framerate correspond au temps de rafraichissement du programme, c'est-à-dire le nombre de fois où les éléments du programme seront mis à jour (ajout de nouvel avion à la simulation, déplacement, etc) en une seconde.\
 Ajoutez deux nouveaux inputs au programme permettant d'augmenter ou de diminuer cette valeur.
 Essayez maintenant de mettre en pause le programme en manipulant ce framerate. Que se passe-t-il ?\
 le programme crash (division par 0)
@@ -54,25 +110,26 @@ Ajoutez une nouvelle fonctionnalité au programme pour mettre le programme en pa
 3) Identifiez quelle variable contrôle le temps de débarquement des avions et doublez-le.
 
 4) Lorsqu'un avion a décollé, il réattérit peu de temps après.
-Faites en sorte qu'à la place, il soit retiré du programme.\
+Assurez-vous qu'à la place, il soit supprimé de la `move_queue`.\
+Pour tester, il suffit de dézoomer et de vérifier que les avions suffisament éloignés ne bougent plus.
 Indices :\
 A quel endroit pouvez-vous savoir que l'avion doit être supprimé ?\
-Dans la fonction move de l'avion
+Dans la fonction get_instruction de la classe Tower.
 
 Pourquoi n'est-il pas sûr de procéder au retrait de l'avion dans cette fonction ?
-Il peut avoir un pointer dessus ailleurs dans le code
+On pourrais avoir des invalidations d'iterateur sur les avions.
 
 A quel endroit de la callstack pourriez-vous le faire à la place ?\
-dans la fonction move de opengl_interface
+dans la fonction move de opengl_interface.
 
 Que devez-vous modifier pour transmettre l'information de la première à la seconde fonction ?
 créer un fonction pour savoir si on doit supprimer l'avion
 
 5) Lorsqu'un objet de type `Displayable` est créé, il faut ajouter celui-ci manuellement dans la liste des objets à afficher.
 Il faut également penser à le supprimer de cette liste avant de le détruire.
-Faites en sorte que l'ajout et la suppression de `display_queue` soit "automatiquement gérée" lorsqu'un `Displayable` est créé ou détruit.
-Pourquoi n'est-il pas spécialement pertinent d'en faire de même pour `DynamicObject` ?
-//y'as plus la question dans les modifs.
+Faites en sorte que l'ajout et la suppression de `display_queue` soit "automatiquement gérée" lorsqu'un `Displayable` est créé ou détruit.\
+Essayez maintenant de supprimer complètement l'avion du programme lorsque vous le retirez de la `move_queue`.\
+En dézoomant, vous devriez maintenant constater que les avions disparaissent maintenant de l'écran.
 
 6) La tour de contrôle a besoin de stocker pour tout `Aircraft` le `Terminal` qui lui est actuellement attribué, afin de pouvoir le libérer une fois que l'avion décolle.
 Cette information est actuellement enregistrée dans un `std::vector<std::pair<const Aircraft*, size_t>>` (size_t représentant l'indice du terminal).
@@ -83,9 +140,11 @@ Modifiez le code afin d'utiliser un conteneur STL plus adapté. Normalement, à 
 ## D- Théorie
 
 1) Comment a-t-on fait pour que seule la classe `Tower` puisse réserver un terminal de l'aéroport ?
+La classe Tower as été déclaré comme friend de airport et la fonction reserve_terminal est private dans airport.
 
-2) En regardant le contenu de la fonction `void Aircraft::turn(Point3D direction)`, pourquoi selon-vous ne sommes-nous pas passer par une réference ?
-Pensez-vous qu'il soit possible d'éviter la copie du `Point3D` passé en paramètre ?
+2) En regardant le contenu de la fonction `void Aircraft::turn(Point3D direction)`, pourquoi selon-vous ne sommes-nous pas passer par une réference constante ?
+Pourquoi n'est-il pas possible d'éviter la copie du `Point3D` passé en paramètre ?
+L'objet va être modifier par la fonction cap_length ce qui poserai problème avec un passage constante, et le point3D ne doit pas être modifier pour les prochains passage dans la fonctions.
 
 ## E- Bonus
 
