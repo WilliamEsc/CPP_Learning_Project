@@ -10,9 +10,6 @@ class Terminal : public GL::DynamicObject
 {
 private:
     unsigned int service_progress = SERVICE_CYCLES;
-    int fuel_stock                = 0;
-    int ordered_fuel              = 0;
-    int next_refill_time          = 0;
     Aircraft* current_aircraft    = nullptr;
     const Point3D pos;
 
@@ -44,7 +41,7 @@ public:
 
     void move() override
     {
-        if (in_use() && is_servicing())
+        if (in_use() && is_servicing() && !current_aircraft->is_low_on_fuel())
         {
             ++service_progress;
         }
@@ -52,9 +49,11 @@ public:
 
     void refill_aircraft_if_needed(int& fuel_stock)
     {
-        if (current_aircraft != nullptr && current_aircraft->is_low_on_fuel())
+        if (in_use() && current_aircraft->is_low_on_fuel())
         {
             current_aircraft->refill(fuel_stock);
         }
     }
+
+    void clear_terminal() { current_aircraft = nullptr; }
 };

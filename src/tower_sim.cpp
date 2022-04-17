@@ -18,12 +18,9 @@
 using namespace std::string_literals;
 
 TowerSimulation::TowerSimulation(int argc, char** argv) :
-    help { (argc > 1) && (std::string { argv[1] } == "--help"s || std::string { argv[1] } == "-h"s) }
+    help { (argc > 1) && (std::string { argv[1] } == "--help"s || std::string { argv[1] } == "-h"s) },
+    context_Initializer(argc, argv)
 {
-    MediaPath::initialize(argv[0]);
-    std::srand(static_cast<unsigned int>(std::time(nullptr)));
-    GL::init_gl(argc, argv, "Airport Tower Simulation");
-
     GL::move_queue.emplace(&aircraft_manager);
 
     create_keystrokes();
@@ -47,30 +44,16 @@ void TowerSimulation::create_keystrokes()
     GL::keystrokes.emplace('o', []() { GL::up_framerate(); });
     GL::keystrokes.emplace('l', []() { GL::down_framerate(); });
     GL::keystrokes.emplace('p', []() { GL::pause(); });
-    GL::keystrokes.emplace(
-        '0',
-        [this]() { std::cout << aircraft_manager.count_airlines(aircraft_factory.airline(0)) << std::endl; });
-    GL::keystrokes.emplace(
-        '1',
-        [this]() { std::cout << aircraft_manager.count_airlines(aircraft_factory.airline(1)) << std::endl; });
-    GL::keystrokes.emplace(
-        '2',
-        [this]() { std::cout << aircraft_manager.count_airlines(aircraft_factory.airline(2)) << std::endl; });
-    GL::keystrokes.emplace(
-        '3',
-        [this]() { std::cout << aircraft_manager.count_airlines(aircraft_factory.airline(3)) << std::endl; });
-    GL::keystrokes.emplace(
-        '4',
-        [this]() { std::cout << aircraft_manager.count_airlines(aircraft_factory.airline(4)) << std::endl; });
-    GL::keystrokes.emplace(
-        '5',
-        [this]() { std::cout << aircraft_manager.count_airlines(aircraft_factory.airline(5)) << std::endl; });
-    GL::keystrokes.emplace(
-        '6',
-        [this]() { std::cout << aircraft_manager.count_airlines(aircraft_factory.airline(6)) << std::endl; });
-    GL::keystrokes.emplace(
-        '7',
-        [this]() { std::cout << aircraft_manager.count_airlines(aircraft_factory.airline(7)) << std::endl; });
+    GL::keystrokes.emplace('m', [this]() { std::cout << aircraft_manager.get_nbCrash() << std::endl; });
+    for (char i = '0'; i < '8'; i++)
+    {
+        GL::keystrokes.emplace(i,
+                               [this, i]() {
+                                   std::cout
+                                       << aircraft_manager.count_airlines(aircraft_factory.airline(i - '0'))
+                                       << std::endl;
+                               });
+    }
 }
 
 void TowerSimulation::display_help() const
@@ -88,6 +71,7 @@ void TowerSimulation::display_help() const
 
 void TowerSimulation::init_airport()
 {
+    assert(airport == nullptr);
     airport =
         new Airport { one_lane_airport, Point3D { 0, 0, 0 },
                       new img::Image { one_lane_airport_sprite_path.get_full_path() }, aircraft_manager };
@@ -100,10 +84,8 @@ void TowerSimulation::launch()
     if (help)
     {
         display_help();
-        return;
     }
 
     init_airport();
-    aircraft_factory.init_aircraft_types();
     GL::loop();
 }
