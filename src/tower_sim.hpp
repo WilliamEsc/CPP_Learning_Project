@@ -5,11 +5,22 @@
 class Airport;
 struct AircraftType;
 
+struct Context_Initializer
+{
+    Context_Initializer(int argc, char** argv)
+    {
+        MediaPath::initialize(argv[0]);
+        std::srand(static_cast<unsigned int>(std::time(nullptr)));
+        GL::init_gl(argc, argv, "Airport Tower Simulation");
+    }
+};
+
 class TowerSimulation
 {
 private:
     bool help        = false;
     Airport* airport = nullptr;
+    Context_Initializer context_Initializer;
     AircraftManager aircraft_manager;
     AircraftFactory aircraft_factory;
 
